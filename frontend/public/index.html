@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bank Management System</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: white;
+            color: black;
+            padding: 20px;
+            margin: 15px;
+            border-radius: 10px;
+            width: 250px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+        }
+
+        input {
+            width: 90%;
+            padding: 8px;
+            margin: 5px 0;
+        }
+
+        button {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1e3c72;
+        }
+
+        #output {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>🏦 Bank Management System</h2>
+
+<div class="container">
+
+    <!-- Create -->
+    <div class="card">
+        <h3>Create Account</h3>
+        <input id="accNo" placeholder="Account No">
+        <input id="name" placeholder="Name">
+        <input id="balance" placeholder="Balance">
+        <button onclick="createAccount()">Create</button>
+    </div>
+
+    <!-- Deposit -->
+    <div class="card">
+        <h3>Deposit</h3>
+        <input id="depAcc" placeholder="Account No">
+        <input id="depAmount" placeholder="Amount">
+        <button onclick="deposit()">Deposit</button>
+    </div>
+
+    <!-- Withdraw -->
+    <div class="card">
+        <h3>Withdraw</h3>
+        <input id="withAcc" placeholder="Account No">
+        <input id="withAmount" placeholder="Amount">
+        <button onclick="withdraw()">Withdraw</button>
+    </div>
+
+    <!-- View -->
+    <div class="card">
+        <h3>View Account</h3>
+        <input id="viewAcc" placeholder="Account No">
+        <button onclick="viewAccount()">View</button>
+    </div>
+
+</div>
+
+<p id="output"></p>
+
+<script>
+
+// Create
+function createAccount() {
+    fetch("http://localhost:8080/bank/create", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            accountNumber: parseInt(accNo.value),
+            holderName: name.value,
+            balance: parseFloat(balance.value)
+        })
+    })
+    .then(res => res.text())
+    .then(data => output.innerText = data);
+}
+
+// Deposit
+function deposit() {
+    fetch(`http://localhost:8080/bank/deposit/${depAcc.value}/${depAmount.value}`, {
+        method: "POST"
+    })
+    .then(res => res.text())
+    .then(data => output.innerText = data);
+}
+
+// Withdraw
+function withdraw() {
+    fetch(`http://localhost:8080/bank/withdraw/${withAcc.value}/${withAmount.value}`, {
+        method: "POST"
+    })
+    .then(res => res.text())
+    .then(data => output.innerText = data);
+}
+
+// View
+function viewAccount() {
+    fetch(`http://localhost:8080/bank/account/${viewAcc.value}`)
+    .then(res => res.json())
+    .then(data => {
+        output.innerText =
+            `Account: ${data.accountNumber} | Name: ${data.holderName} | Balance: ${data.balance}`;
+    });
+}
+
+</script>
+
+</body>
+</html>
